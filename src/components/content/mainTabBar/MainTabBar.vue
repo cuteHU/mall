@@ -38,7 +38,7 @@
       <img slot="item-icon-active"
            src="@/assets/image/tabbar/profile_active.svg"
            alt="">
-      <div slot="item-text">个人中心</div>
+      <div slot="item-text">我的</div>
     </tab-bar-item>
   </tab-bar>
 </template>
