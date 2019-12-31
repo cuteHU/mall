@@ -4,7 +4,8 @@
                  :key="index">
       <a :href="item.link">
         <img :src="item.image"
-             alt="">
+             alt=""
+             @load="imageLoad">
       </a>
     </swiper-item>
   </swiper>
@@ -21,10 +22,24 @@ export default {
       default: []
     }
   },
+  data () {
+    return {
+      isLoad: false
+    }
+  },
   components: {
     Swiper,
     SwiperItem
-  }
+  },
+  methods: {
+    imageLoad () {
+      // console.log('---')
+      if (!this.isLoad) {
+        this.$emit('swiperImageLoad')
+        this.isLoad = true
+      }
+    }
+  },
 }
 </script>
 
