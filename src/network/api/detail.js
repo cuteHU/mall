@@ -1,6 +1,7 @@
 import {
     request
 } from 'network/request'
+
 export function getDetail(iid) {
     return request({
         url: '/detail',
@@ -8,4 +9,8 @@ export function getDetail(iid) {
             iid: iid
         }
     })
+}
+
+export class GoodsInfo {
+
 }
