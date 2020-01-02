@@ -1,6 +1,7 @@
 <template>
   <div id="detail">
-    <detail-nav-bar class="detail-nav"></detail-nav-bar>
+    <detail-nav-bar class="detail-nav"
+                    @titleClick="titleClick"></detail-nav-bar>
     <scroll ref="scroll"
             class="content">
       <detail-swiper :topImages="topImages"></detail-swiper>
@@ -10,12 +11,15 @@
                          @imageLoad="imageLoad"></detail-goods-info>
       <detail-param-info :param-info="paramInfo"></detail-param-info>
       <detail-comment-info :comment-info="commentInfo"></detail-comment-info>
+      <goods-list :goods-list="recommends"></goods-list>
     </scroll>
   </div>
 </template>
 
 <script>
-import { getDetail, Goods, Shop, GoodsParam } from 'network/api/detail'
+import { getDetail, getRecommend, Goods, Shop, GoodsParam } from 'network/api/detail'
+
+import { itemListenerMixin } from '@/common/mixin'
 
 import Scroll from 'components/common/scroll/Scroll'
 
@@ -27,6 +31,8 @@ import DetailGoodsInfo from './childComponents/DetailGoodsInfo'
 import DetailParamInfo from './childComponents/DetailParamInfo'
 import DetailCommentInfo from './childComponents/DetailCommentInfo'
 
+import GoodsList from 'components/content/goods/GoodsList'
+
 export default {
   name: 'Detail',
   components: {
@@ -37,8 +43,10 @@ export default {
     DetailShopInfo,
     DetailGoodsInfo,
     DetailParamInfo,
-    DetailCommentInfo
+    DetailCommentInfo,
+    GoodsList
   },
+  mixins: [itemListenerMixin],
   data () {
     return {
       iid: null,
@@ -48,13 +56,16 @@ export default {
       detailInfo: {},
       paramInfo: {},
       commentInfo: {},
+      recommends: [],
+      itemImgListener: null
     }
   },
   created () {
     this.iid = this.$route.params.id
+    // 1.请求详情数据
     getDetail(this.iid).then((result) => {
       const data = result.result
-      console.log(result.result);
+      // console.log(result.result);
       // 1.获取顶部的图片轮播数据
       this.topImages = data.itemInfo.topImages
 
@@ -77,10 +88,34 @@ export default {
     }).catch((err) => {
 
     });
+    // 2.请求推荐数据
+    getRecommend().then(res => {
+      // console.log(res);
+      this.recommends = res.data.list
+    }).catch((err => {
+
+    })
+    )
+  },
+  // mounted () {
+  //   const refresh = debounce(this.$refs.scroll.refresh, 100)
+  //   this.itemImgListener = () => {
+  //     refresh()
+  //   }
+  //   this.$bus.$on('itemImgLoad', this.itemImgListener)
+  // },
+  // deactivated () {
+  //   console.log('deactivated')
+  // },
+  destroyed () {
+    this.$bus.$off('itemImageLoad', this.itemImgListener)
   },
   methods: {
     imageLoad () {
       this.$refs.Scroll.refresh()
+    },
+    titleClick () {
+      console.log(index);
     }
   },
 }

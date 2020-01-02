@@ -32,6 +32,7 @@
 <script>
 import { getHomeMultidata, getHomeGoods } from 'network/api/home'
 import { debounce } from '@/common/utils'
+import { itemListenerMixin } from '@/common/mixin'
 
 import NavBar from 'components/common/navbar/NavBar'
 import Scroll from 'components/common/scroll/Scroll'
@@ -57,6 +58,7 @@ export default {
     RecommendView,
     FeatureView
   },
+  mixins: [itemListenerMixin],
   created () {
     // 1.请求多个数据
     this.getHomeMultidata()
@@ -67,22 +69,25 @@ export default {
     this.getHomeGoods('sell')
 
   },
-  mounted () {
-    // 1.图片加载完成的事件监听
-    const refresh = debounce(this.$refs.scroll.refresh, 200)
-    // 1.监听item中图片加载完成
-    this.$bus.$on('itemImageLoad', () => {
-      // console.log('itemImageLoad');
-      // this.$refs.scroll.refresh()
-      refresh()
-    })
-  },
+  // mounted () {
+  //   // 1.图片加载完成的事件监听
+  //   const refresh = debounce(this.$refs.scroll.refresh, 100)
+  //   // 1.监听item中图片加载完成
+  //   this.itemImgListener = () => {
+  //     refresh()
+  //   }
+  //   this.$bus.$on('itemImageLoad', this.itemImgListener)
+  // },
   activated () {
     this.$refs.scroll.scrollTop(0, this.saveY)
     this.$refs.scroll.refresh()
   },
   deactivated () {
+    // 1.保存Y值
     this.saveY = this.$refs.scroll.getScrollY()
+
+    // 2.取消全局事件的监听
+    this.$bus.$off('itemImageLoad', this.itemImgListener)
   },
   data () {
     return {
@@ -97,7 +102,8 @@ export default {
       isShowBackTop: false,
       tabOffSetTop: 0,
       isTabFixed: false,
-      saveY: 0
+      saveY: 0,
+      itemImgListener: null
     }
   },
   computed: {

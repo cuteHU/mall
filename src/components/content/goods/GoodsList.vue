@@ -2,7 +2,7 @@
   <div class="goods">
     <goods-list-item v-for="(item, index) in goodsList"
                      :key="index"
-                     :goods-item="item">
+                     :product="item">
     </goods-list-item>
 
   </div>
