@@ -56,6 +56,6 @@ export default {
   font-size: 15px;
 }
 .active {
-  color: var(--color-high-text);
+  color: skyblue;
 }
 </style>

@@ -32,14 +32,13 @@
 <script>
 import { getHomeMultidata, getHomeGoods } from 'network/api/home'
 import { debounce } from '@/common/utils'
-import { itemListenerMixin } from '@/common/mixin'
+import { itemListenerMixin, backTopMixin } from '@/common/mixin'
 
 import NavBar from 'components/common/navbar/NavBar'
 import Scroll from 'components/common/scroll/Scroll'
 
 import TabControl from 'components/content/tabControl/TabControl'
 import GoodsList from 'components/content/goods/GoodsList'
-import BackTop from 'components/content/backTop/BackTop'
 
 import HomeSwiper from './childComponents/HomeSwiper'
 import RecommendView from './childComponents/RecommendView'
@@ -53,12 +52,12 @@ export default {
     Scroll,
     TabControl,
     GoodsList,
-    BackTop,
+    // BackTop,
     HomeSwiper,
     RecommendView,
     FeatureView
   },
-  mixins: [itemListenerMixin],
+  mixins: [itemListenerMixin, backTopMixin],
   created () {
     // 1.请求多个数据
     this.getHomeMultidata()
@@ -99,11 +98,11 @@ export default {
         'sell': { page: 1, list: [] }
       },
       currentType: 'pop',
-      isShowBackTop: false,
+      // isShowBackTop: false,
       tabOffSetTop: 0,
       isTabFixed: false,
-      saveY: 0,
-      itemImgListener: null
+      saveY: 0
+      // itemImgListener: null
     }
   },
   computed: {
@@ -114,7 +113,7 @@ export default {
   methods: {
     // 事件监听相关方法
     tabClick (index) {
-      console.log(index);
+      // console.log(index);
       switch (index) {
         case 0:
           this.currentType = 'pop';
@@ -132,15 +131,10 @@ export default {
       this.$refs.tabControl2.currentIndex = index
     },
 
-    backTopClick () {
-      console.log('回到顶部');
-      this.$refs.scroll.scrollTop(0, 0, 500)
-    },
-
     contentScroll (position) {
       // console.log(position);
       // 1.判断BackTop是否显示
-      this.isShowBackTop = -position.y > 1000
+      this.listenShowBackTop(position)
       // 2.决定tabControl是否吸顶(position: fixed)
       this.isTabFixed = (-position.y) > this.tabOffSetTop
     },

@@ -1,7 +1,8 @@
 <template>
   <div id="detail">
     <detail-nav-bar class="detail-nav"
-                    @titleClick="titleClick"></detail-nav-bar>
+                    @titleClick="titleClick"
+                    ref="nav"></detail-nav-bar>
     <scroll ref="scroll"
             class="content"
             @scroll="contentScroll"
@@ -18,13 +19,16 @@
       <goods-list :goods-list="recommends"
                   ref="recommend"></goods-list>
     </scroll>
+    <back-top @click.native="backTopClick"
+              v-show="isShowBackTop"></back-top>
+    <detail-bottom-bar></detail-bottom-bar>
   </div>
 </template>
 
 <script>
 import { getDetail, getRecommend, Goods, Shop, GoodsParam } from 'network/api/detail'
 
-import { itemListenerMixin } from '@/common/mixin'
+import { itemListenerMixin, backTopMixin } from '@/common/mixin'
 import { debounce } from '@/common/utils'
 
 import Scroll from 'components/common/scroll/Scroll'
@@ -36,6 +40,7 @@ import DetailShopInfo from './childComponents/DetailShopInfo'
 import DetailGoodsInfo from './childComponents/DetailGoodsInfo'
 import DetailParamInfo from './childComponents/DetailParamInfo'
 import DetailCommentInfo from './childComponents/DetailCommentInfo'
+import DetailBottomBar from './childComponents/DetailBottomBar'
 
 import GoodsList from 'components/content/goods/GoodsList'
 
@@ -50,9 +55,10 @@ export default {
     DetailGoodsInfo,
     DetailParamInfo,
     DetailCommentInfo,
+    DetailBottomBar,
     GoodsList
   },
-  mixins: [itemListenerMixin],
+  mixins: [itemListenerMixin, backTopMixin],
   data () {
     return {
       iid: null,
@@ -65,7 +71,8 @@ export default {
       recommends: [],
       itemImgListener: null,
       themeTopYs: [],
-      getThemeTopY: null
+      getThemeTopY: null,
+      currentIndex: 0
     }
   },
   created () {
@@ -128,7 +135,8 @@ export default {
       this.themeTopYs.push(this.$refs.params.$el.offsetTop - 49)
       this.themeTopYs.push(this.$refs.comment.$el.offsetTop - 49)
       this.themeTopYs.push(this.$refs.recommend.$el.offsetTop - 49)
-      console.log(this.themeTopYs)
+      this.themeTopYs.push(Number.MAX_VALUE)
+      // console.log(this.themeTopYs)
     }, 100)
   },
   // mounted () {
@@ -153,13 +161,25 @@ export default {
       this.getThemeTopY()
     },
     titleClick (index) {
-      console.log(index);
+      // console.log(index);
       this.$refs.scroll.scrollTop(0, -this.themeTopYs[index], 100)
     },
     contentScroll (position) {
       // console.log(position);
       // 1.获取y值
       const positionY = -position.y
+      let length = this.themeTopYs.length
+      for (let i = 0; i < length - 1; i++) {
+        // if (this.currentIndex != i && ((i < length - 1 && positionY >= this.themeTopYs[i] && positionY < this.themeTopYs[i + 1]) || (i == length - 1 && positionY >= this.themeTopYs[i]))) {
+        //   // console.log(this.currentIndex);
+        // }
+        if (this.currentIndex != i && (positionY >= this.themeTopYs[i] && positionY < this.themeTopYs[i + 1])) {
+          this.currentIndex = i
+          this.$refs.nav.currentIndex = this.currentIndex
+        }
+      }
+      // 2.判断BackTop是否显示
+      this.listenShowBackTop(position)
     }
   },
 }
@@ -171,7 +191,7 @@ export default {
   height: 100vh;
   background-color: #fff;
   overflow: hidden;
-  z-index: 9;
+  z-index: 1;
 }
 .detail-nav {
   position: relative;
@@ -179,6 +199,7 @@ export default {
   background-color: #fff;
 }
 .content {
-  height: calc(100% - 44px);
+  height: calc(100% - 44px - 49px);
+  background-color: #fff;
 }
 </style>
