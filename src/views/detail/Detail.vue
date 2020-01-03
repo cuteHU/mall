@@ -21,7 +21,7 @@
     </scroll>
     <back-top @click.native="backTopClick"
               v-show="isShowBackTop"></back-top>
-    <detail-bottom-bar></detail-bottom-bar>
+    <detail-bottom-bar @addCart="addToCart"></detail-bottom-bar>
   </div>
 </template>
 
@@ -180,6 +180,17 @@ export default {
       }
       // 2.判断BackTop是否显示
       this.listenShowBackTop(position)
+    },
+    addToCart () {
+      // console.log('---');
+      // 1.获取购物车需要展示的信息
+      const product = {};
+      product.image = this.topImages[0];
+      product.title = this.goods.title;
+      product.desc = this.goods.desc;
+      product.price = this.goods.realPrice;
+      product.iid = this.iid;
+
     }
   },
 }

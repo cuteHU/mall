@@ -4,6 +4,7 @@ import {
 
 import BackTop from 'components/content/backTop/BackTop'
 
+// 图片加载使用防抖函数混入
 export const itemListenerMixin = {
     data() {
         return {
@@ -21,6 +22,7 @@ export const itemListenerMixin = {
     },
 }
 
+// 回到顶部按钮混入
 export const backTopMixin = {
     components: {
         BackTop
