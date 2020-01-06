@@ -25,18 +25,12 @@ export class Goods {
         this.discount = itemInfo.discountDesc;
         this.columns = columns;
         this.services = services;
-        this.nowPrice = itemInfo.highNowPrice;
+        this.realPrice = itemInfo.lowNowPrice;
     }
 }
-
-export class GoodsParam {
-    constructor(info, rule) {
-        // 注: images可能没有值(某些商品有值, 某些没有值)
-        this.image = info.images ? info.images[0] : '';
-        this.infos = info.set;
-        this.sizes = rule.tables;
-    }
-}
+// 体现面向对象的封装的思想  
+// 先把从服务器请求到的数据，先给封装到一个类里面，
+// 再来创建对应这个类的对象，用这个对象给传到下一层组件里面,让组件对这个对象进行展示
 
 export class Shop {
     constructor(shopInfo) {
@@ -46,5 +40,14 @@ export class Shop {
         this.sells = shopInfo.cSells;
         this.score = shopInfo.score;
         this.goodsCount = shopInfo.cGoods
+    }
+}
+
+export class GoodsParam {
+    constructor(info, rule) {
+        // 注: images可能没有值(某些商品有值, 某些没有值)
+        this.image = info.images ? info.images[0] : '';
+        this.infos = info.set;
+        this.sizes = rule.tables;
     }
 }
